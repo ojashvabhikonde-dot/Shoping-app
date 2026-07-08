@@ -3,11 +3,11 @@ const dns = require('dns');
 
 const connectDB = async () => {
   try {
-    // Configure Google DNS fallback to resolve SRV record resolving issues
+    // Fallback DNS servers for SRV resolution
     try {
       dns.setServers(['8.8.8.8', '8.8.4.4']);
     } catch (dnsErr) {
-      console.warn('Unable to set DNS servers fallback:', dnsErr.message);
+      console.warn('DNS server fallback warning:', dnsErr.message);
     }
 
     const conn = await mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/ecommerce');

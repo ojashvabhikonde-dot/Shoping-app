@@ -3,7 +3,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useAuth } from '../context/AuthContext';
 import './Navbar.css';
 
-const Navbar = ({ setCurrentPage }) => {
+const Navbar = ({ setCurrentPage, currentPage }) => {
   const { theme, toggleTheme } = useTheme();
   const { user, logout } = useAuth();
 
@@ -18,10 +18,10 @@ const Navbar = ({ setCurrentPage }) => {
 
         {/* Links */}
         <ul className="navbar-links">
-          <li onClick={() => setCurrentPage('landing')}>Home</li>
-          <li>Collections</li>
-          <li>New Arrivals</li>
-          <li>Special Offers</li>
+          <li className={currentPage === 'landing' ? 'active' : ''} onClick={() => setCurrentPage('landing')}>Home</li>
+          <li className={currentPage === 'collections' ? 'active' : ''} onClick={() => setCurrentPage('collections')}>Collections</li>
+          <li className={currentPage === 'new-arrivals' ? 'active' : ''} onClick={() => setCurrentPage('new-arrivals')}>New Arrivals</li>
+          <li className={currentPage === 'special-offers' ? 'active' : ''} onClick={() => setCurrentPage('special-offers')}>Special Offers</li>
         </ul>
 
         {/* Actions */}

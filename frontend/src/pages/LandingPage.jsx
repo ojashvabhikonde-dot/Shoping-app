@@ -1,55 +1,74 @@
 import React, { useState } from 'react';
 import './LandingPage.css';
 
-// Predefined mock products to render a beautiful layout
 const PRODUCTS = [
   {
     id: 1,
     name: 'Aura Sound Headphones',
-    price: '$299.00',
-    category: 'Audio',
+    price: '₹24,900',
+    category: 'Tech & Audio',
     rating: '4.9',
-    image: '🎧',
+    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80',
     tag: 'Best Seller',
     gradient: 'linear-gradient(135deg, #a78bfa, #6366f1)'
   },
   {
     id: 2,
     name: 'Minimalist Chrono Watch',
-    price: '$189.00',
+    price: '₹15,900',
     category: 'Accessories',
     rating: '4.8',
-    image: '⌚',
+    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&auto=format&fit=crop&q=80',
     tag: 'Trending',
     gradient: 'linear-gradient(135deg, #f472b6, #ec4899)'
   },
   {
     id: 3,
     name: 'Eclipse Leather Bag',
-    price: '$145.00',
-    category: 'Fashion',
+    price: '₹11,900',
+    category: 'Fashion & Style',
     rating: '4.7',
-    image: '👜',
+    image: 'https://images.unsplash.com/photo-1584917865442-de89df76afd3?w=600&auto=format&fit=crop&q=80',
     tag: 'New',
     gradient: 'linear-gradient(135deg, #38bdf8, #0284c7)'
   },
   {
     id: 4,
     name: 'Nebula Smart Lamp',
-    price: '$79.00',
-    category: 'Home',
+    price: '₹6,500',
+    category: 'Smart Living',
     rating: '4.6',
-    image: '💡',
+    image: 'https://images.unsplash.com/photo-1507473885765-e6ed057f782c?w=600&auto=format&fit=crop&q=80',
     tag: 'Smart',
     gradient: 'linear-gradient(135deg, #34d399, #059669)'
+  },
+  {
+    id: 5,
+    name: 'Aura Curved Monitor',
+    price: '₹49,900',
+    category: 'Tech & Audio',
+    rating: '5.0',
+    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80',
+    tag: 'New Release',
+    gradient: 'linear-gradient(135deg, #60a5fa, #3b82f6)'
+  },
+  {
+    id: 6,
+    name: 'AeroLeather Backpack',
+    price: '₹14,500',
+    category: 'Fashion & Style',
+    rating: '4.9',
+    image: 'https://images.unsplash.com/photo-1553062407-98eeb64c6a62?w=600&auto=format&fit=crop&q=80',
+    tag: 'Limited Edition',
+    gradient: 'linear-gradient(135deg, #fbbf24, #d97706)'
   }
 ];
 
 const CATEGORIES = [
-  { name: 'Fashion & Style', icon: '👕', count: '1,200+ Products' },
-  { name: 'Tech & Audio', icon: '💻', count: '450+ Products' },
-  { name: 'Smart Living', icon: '🏠', count: '320+ Products' },
-  { name: 'Accessories', icon: '🕶️', count: '680+ Products' }
+  { name: 'Fashion & Style', image: 'https://images.unsplash.com/photo-1483985988355-763728e1935b?w=600&auto=format&fit=crop&q=80', count: '1,200+ Products' },
+  { name: 'Tech & Audio', image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=600&auto=format&fit=crop&q=80', count: '450+ Products' },
+  { name: 'Smart Living', image: 'https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&auto=format&fit=crop&q=80', count: '320+ Products' },
+  { name: 'Accessories', image: 'https://images.unsplash.com/photo-1509695507497-903c140c43b0?w=600&auto=format&fit=crop&q=80', count: '680+ Products' }
 ];
 
 const LandingPage = ({ setCurrentPage }) => {
@@ -61,11 +80,9 @@ const LandingPage = ({ setCurrentPage }) => {
 
   return (
     <div className="landing-page">
-      {/* Background Mesh Gradients */}
       <div className="mesh-gradient bg-glow-1"></div>
       <div className="mesh-gradient bg-glow-2"></div>
 
-      {/* Hero Section */}
       <section className="hero-section fade-in">
         <div className="hero-content">
           <div className="badge-promo">🎉 SUMMER COLLECTION IS LIVE</div>
@@ -108,12 +125,18 @@ const LandingPage = ({ setCurrentPage }) => {
         <div className="hero-visual">
           <div className="visual-card main-visual">
             <span className="visual-badge">Hot Release</span>
-            <span className="visual-icon">🎧</span>
+            <div className="visual-image-wrapper">
+              <img 
+                src="https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=600&auto=format&fit=crop&q=80" 
+                alt="Aura Wireless Max" 
+                className="visual-image" 
+              />
+            </div>
             <div className="visual-info">
               <h3>Aura Wireless Max</h3>
               <p>Premium Noise Cancelling</p>
               <div className="visual-price">
-                <span className="price">$349</span>
+                <span className="price">₹28,900</span>
                 <button className="visual-add-btn" onClick={handleAddToCart}>+</button>
               </div>
             </div>
@@ -123,7 +146,6 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* Floating Cart Indicator */}
       {cartCount > 0 && (
         <div className="floating-cart">
           <span className="cart-icon">🛒</span>
@@ -131,7 +153,6 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
       )}
 
-      {/* Category Section */}
       <section className="categories-section">
         <div className="section-header">
           <h2 className="section-title">Shop by Category</h2>
@@ -139,8 +160,10 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
         <div className="categories-grid">
           {CATEGORIES.map((cat, idx) => (
-            <div key={idx} className="category-card">
-              <span className="category-icon">{cat.icon}</span>
+            <div key={idx} className="category-card" onClick={() => setCurrentPage('collections')}>
+              <div className="category-image-wrapper">
+                <img src={cat.image} alt={cat.name} className="category-card-image" />
+              </div>
               <h3 className="category-name">{cat.name}</h3>
               <span className="category-count">{cat.count}</span>
             </div>
@@ -148,7 +171,6 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* Products Section */}
       <section className="products-section">
         <div className="section-header">
           <h2 className="section-title">Trending Now</h2>
@@ -157,9 +179,9 @@ const LandingPage = ({ setCurrentPage }) => {
         <div className="products-grid">
           {PRODUCTS.map((prod) => (
             <div key={prod.id} className="product-card">
-              <div className="product-visual-wrapper" style={{ background: prod.gradient }}>
+              <div className="product-visual-wrapper">
                 <span className="product-tag">{prod.tag}</span>
-                <span className="product-visual-icon">{prod.image}</span>
+                <img src={prod.image} alt={prod.name} className="product-image" />
               </div>
               <div className="product-details">
                 <span className="product-cat">{prod.category}</span>
@@ -184,7 +206,6 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* Promo Banner Section */}
       <section className="promo-banner">
         <div className="promo-content">
           <h2>Get 15% Off Your First Order</h2>
@@ -196,7 +217,6 @@ const LandingPage = ({ setCurrentPage }) => {
         </div>
       </section>
 
-      {/* Footer */}
       <footer className="footer">
         <div className="footer-grid">
           <div className="footer-brand">

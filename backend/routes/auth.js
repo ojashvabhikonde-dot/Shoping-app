@@ -38,17 +38,14 @@ router.post('/signup', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
     }
 
-    // Check if user already exists
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ success: false, message: 'User already exists with this email' });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user
     const user = await User.create({
       name,
       email,
@@ -56,7 +53,6 @@ router.post('/signup', async (req, res) => {
     });
 
     if (user) {
-      // Create JWT token
       const token = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET || 'ecommerce_jwt_secret_token_key_12345',
@@ -90,19 +86,16 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ success: false, message: 'Please provide email and password' });
     }
 
-    // Check for user
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Check password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(401).json({ success: false, message: 'Invalid credentials' });
     }
 
-    // Create JWT token
     const token = jwt.sign(
       { id: user._id },
       process.env.JWT_SECRET || 'ecommerce_jwt_secret_token_key_12345',

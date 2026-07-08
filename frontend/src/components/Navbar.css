@@ -63,7 +63,8 @@
   transition: color var(--transition-speed) var(--transition-bezier);
 }
 
-.navbar-links li:hover {
+.navbar-links li:hover,
+.navbar-links li.active {
   color: var(--text-primary);
 }
 
@@ -79,7 +80,8 @@
   transition: width var(--transition-speed) var(--transition-bezier);
 }
 
-.navbar-links li:hover::after {
+.navbar-links li:hover::after,
+.navbar-links li.active::after {
   width: 100%;
 }
 
