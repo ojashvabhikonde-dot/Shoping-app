@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 import './SpecialOffers.css';
 
 const SPECIAL_OFFERS = [
@@ -76,8 +77,8 @@ const SPECIAL_OFFERS = [
   }
 ];
 
-const SpecialOffers = () => {
-  const [cartCount, setCartCount] = useState(0);
+const SpecialOffers = ({ setCurrentPage }) => {
+  const { addToCart, cartCount } = useCart();
   const [copiedCode, setCopiedCode] = useState(null);
 
   const [timeLeft, setTimeLeft] = useState({
@@ -103,10 +104,6 @@ const SpecialOffers = () => {
 
     return () => clearInterval(timer);
   }, []);
-
-  const handleAddToCart = () => {
-    setCartCount(prev => prev + 1);
-  };
 
   const copyToClipboard = (code) => {
     try {
@@ -211,7 +208,7 @@ const SpecialOffers = () => {
                     <span className="original-price">{prod.originalPrice}</span>
                     <span className="sale-price">{prod.salePrice}</span>
                   </div>
-                  <button className="btn-icon-add" onClick={handleAddToCart} aria-label="Add to Cart">
+                  <button className="btn-icon-add" onClick={() => addToCart(prod)} aria-label="Add to Cart">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -225,7 +222,7 @@ const SpecialOffers = () => {
       </section>
 
       {cartCount > 0 && (
-        <div className="floating-cart">
+        <div className="floating-cart" onClick={() => setCurrentPage('cart')}>
           <span className="cart-icon">🛒</span>
           <span className="cart-badge">{cartCount}</span>
         </div>

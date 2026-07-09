@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext';
 import './Collections.css';
 
 const COLLECTIONS_PRODUCTS = [
@@ -246,14 +247,10 @@ const COLLECTIONS_PRODUCTS = [
 
 const CATEGORIES = ['All', 'Fashion & Style', 'Tech & Audio', 'Smart Living', 'Accessories'];
 
-const Collections = () => {
+const Collections = ({ setCurrentPage }) => {
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [searchQuery, setSearchQuery] = useState('');
-  const [cartCount, setCartCount] = useState(0);
-
-  const handleAddToCart = () => {
-    setCartCount(prev => prev + 1);
-  };
+  const { addToCart, cartCount } = useCart();
 
   const filteredProducts = COLLECTIONS_PRODUCTS.filter(prod => {
     const matchesCategory = selectedCategory === 'All' || prod.category === selectedCategory;
@@ -327,7 +324,7 @@ const Collections = () => {
                   </div>
                   <span className="product-price">{prod.price}</span>
                 </div>
-                <button className="btn-add-to-cart" onClick={handleAddToCart}>
+                <button className="btn-add-to-cart" onClick={() => addToCart(prod)}>
                   Add to Cart
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                     <line x1="12" y1="5" x2="12" y2="19"></line>
@@ -347,7 +344,7 @@ const Collections = () => {
       )}
 
       {cartCount > 0 && (
-        <div className="floating-cart">
+        <div className="floating-cart" onClick={() => setCurrentPage('cart')}>
           <span className="cart-icon">🛒</span>
           <span className="cart-badge">{cartCount}</span>
         </div>

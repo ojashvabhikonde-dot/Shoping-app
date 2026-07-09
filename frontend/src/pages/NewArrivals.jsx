@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useCart } from '../context/CartContext';
 import './NewArrivals.css';
 
 const NEW_ARRIVALS = [
@@ -92,12 +93,8 @@ const NEW_ARRIVALS = [
   }
 ];
 
-const NewArrivals = () => {
-  const [cartCount, setCartCount] = useState(0);
-
-  const handleAddToCart = () => {
-    setCartCount(prev => prev + 1);
-  };
+const NewArrivals = ({ setCurrentPage }) => {
+  const { addToCart, cartCount } = useCart();
 
   return (
     <div className="new-arrivals-page">
@@ -144,7 +141,7 @@ const NewArrivals = () => {
             </div>
             <div className="spotlight-price-row">
               <span className="spotlight-price">₹49,900</span>
-              <button className="btn-primary-glow" onClick={handleAddToCart}>
+              <button className="btn-primary-glow" onClick={() => addToCart(NEW_ARRIVALS.find(item => item.id === 501) || NEW_ARRIVALS[0])}>
                 Pre-Order Now
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -173,7 +170,7 @@ const NewArrivals = () => {
                 <p className="arrival-desc">{prod.desc}</p>
                 <div className="arrival-price-row">
                   <span className="arrival-price">{prod.price}</span>
-                  <button className="btn-icon-add" onClick={handleAddToCart} aria-label="Add to Cart">
+                  <button className="btn-icon-add" onClick={() => addToCart(prod)} aria-label="Add to Cart">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
@@ -187,7 +184,7 @@ const NewArrivals = () => {
       </section>
 
       {cartCount > 0 && (
-        <div className="floating-cart">
+        <div className="floating-cart" onClick={() => setCurrentPage('cart')}>
           <span className="cart-icon">🛒</span>
           <span className="cart-badge">{cartCount}</span>
         </div>

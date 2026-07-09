@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
+import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
 import LandingPage from './pages/LandingPage';
 import Login from './pages/Login';
@@ -8,6 +9,7 @@ import Signup from './pages/Signup';
 import Collections from './pages/Collections';
 import NewArrivals from './pages/NewArrivals';
 import SpecialOffers from './pages/SpecialOffers';
+import Cart from './pages/Cart';
 
 const MainApp = () => {
   const [currentPage, setCurrentPage] = useState('landing');
@@ -22,6 +24,8 @@ const MainApp = () => {
         return <NewArrivals setCurrentPage={setCurrentPage} />;
       case 'special-offers':
         return <SpecialOffers setCurrentPage={setCurrentPage} />;
+      case 'cart':
+        return <Cart setCurrentPage={setCurrentPage} />;
       case 'login':
         return <Login setCurrentPage={setCurrentPage} />;
       case 'signup':
@@ -45,7 +49,9 @@ function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <MainApp />
+        <CartProvider>
+          <MainApp />
+        </CartProvider>
       </AuthProvider>
     </ThemeProvider>
   );
