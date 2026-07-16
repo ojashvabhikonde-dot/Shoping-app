@@ -24,6 +24,7 @@ const Navbar = ({ setCurrentPage, currentPage }) => {
           <li className={currentPage === 'collections' ? 'active' : ''} onClick={() => setCurrentPage('collections')}>Collections</li>
           <li className={currentPage === 'new-arrivals' ? 'active' : ''} onClick={() => setCurrentPage('new-arrivals')}>New Arrivals</li>
           <li className={currentPage === 'special-offers' ? 'active' : ''} onClick={() => setCurrentPage('special-offers')}>Special Offers</li>
+          {user && <li className={currentPage === 'orders' ? 'active' : ''} onClick={() => setCurrentPage('orders')}>My Orders</li>}
         </ul>
 
         {/* Actions */}
@@ -68,7 +69,7 @@ const Navbar = ({ setCurrentPage, currentPage }) => {
           {/* User Auth controls */}
           {user ? (
             <div className="user-profile-menu">
-              <span className="welcome-msg">Hi, <strong className="user-name">{user.name}</strong></span>
+              <span className="welcome-msg">Hi, <strong className="user-name-link" onClick={() => setCurrentPage('profile')}>{user.name}</strong></span>
               <button onClick={logout} className="logout-btn">
                 <span>Logout</span>
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">

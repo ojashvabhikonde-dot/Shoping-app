@@ -111,6 +111,41 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  // Update profile method
+  const updateProfile = async (name, email, password) => {
+    setLoading(true);
+    setError(null);
+    const token = localStorage.getItem('token');
+    try {
+      const response = await fetch(`${API_URL}/me`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
+        body: JSON.stringify({ name, email, password }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.message || 'Profile update failed');
+      }
+
+      setUser({
+        _id: data.user._id,
+        name: data.user.name,
+        email: data.user.email,
+      });
+      return { success: true };
+    } catch (err) {
+      setError(err.message);
+      return { success: false, message: err.message };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   // Logout method
   const logout = () => {
     localStorage.removeItem('token');
@@ -118,7 +153,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, error, signup, login, logout, setError }}>
+    <AuthContext.Provider value={{ user, loading, error, signup, login, logout, updateProfile, setError }}>
       {children}
     </AuthContext.Provider>
   );

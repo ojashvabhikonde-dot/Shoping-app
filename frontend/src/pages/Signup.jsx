@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import './Auth.css';
 
-const Signup = ({ setCurrentPage }) => {
+const Signup = ({ setCurrentPage, redirectPage, setRedirectPage }) => {
   const { signup, error, setError, loading } = useAuth();
   
   const [formData, setFormData] = useState({
@@ -49,7 +49,12 @@ const Signup = ({ setCurrentPage }) => {
 
     const res = await signup(name, email, password);
     if (res.success) {
-      setCurrentPage('landing');
+      if (redirectPage) {
+        setCurrentPage(redirectPage);
+        setRedirectPage(null);
+      } else {
+        setCurrentPage('landing');
+      }
     }
   };
 

@@ -10,9 +10,13 @@ import Collections from './pages/Collections';
 import NewArrivals from './pages/NewArrivals';
 import SpecialOffers from './pages/SpecialOffers';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
+import Orders from './pages/Orders';
+import Profile from './pages/Profile';
 
 const MainApp = () => {
   const [currentPage, setCurrentPage] = useState('landing');
+  const [redirectPage, setRedirectPage] = useState(null);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -25,11 +29,34 @@ const MainApp = () => {
       case 'special-offers':
         return <SpecialOffers setCurrentPage={setCurrentPage} />;
       case 'cart':
-        return <Cart setCurrentPage={setCurrentPage} />;
+        return (
+          <Cart 
+            setCurrentPage={setCurrentPage} 
+            setRedirectPage={setRedirectPage} 
+          />
+        );
+      case 'checkout':
+        return <Checkout setCurrentPage={setCurrentPage} />;
+      case 'orders':
+        return <Orders setCurrentPage={setCurrentPage} />;
+      case 'profile':
+        return <Profile setCurrentPage={setCurrentPage} />;
       case 'login':
-        return <Login setCurrentPage={setCurrentPage} />;
+        return (
+          <Login 
+            setCurrentPage={setCurrentPage} 
+            redirectPage={redirectPage} 
+            setRedirectPage={setRedirectPage} 
+          />
+        );
       case 'signup':
-        return <Signup setCurrentPage={setCurrentPage} />;
+        return (
+          <Signup 
+            setCurrentPage={setCurrentPage} 
+            redirectPage={redirectPage} 
+            setRedirectPage={setRedirectPage} 
+          />
+        );
       default:
         return <LandingPage setCurrentPage={setCurrentPage} />;
     }
@@ -44,6 +71,7 @@ const MainApp = () => {
     </div>
   );
 };
+
 
 function App() {
   return (

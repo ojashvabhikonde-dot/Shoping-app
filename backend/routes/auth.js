@@ -2,26 +2,10 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const { protect } = require('../middleware/auth');
 const User = require('../models/User');
 
-// Middleware to protect routes via JWT verification
-const protect = async (req, res, next) => {
-  let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith('Bearer')) {
-    try {
-      token = req.headers.authorization.split(' ')[1];
-      const decoded = jwt.verify(token, process.env.JWT_SECRET || 'ecommerce_jwt_secret_token_key_12345');
-      req.user = await User.findById(decoded.id).select('-password');
-      next();
-    } catch (error) {
-      return res.status(401).json({ success: false, message: 'Not authorized, token failed' });
-    }
-  }
 
-  if (!token) {
-    return res.status(401).json({ success: false, message: 'Not authorized, no token' });
-  }
-};
 
 // @desc    Register a new user
 // @route   POST /api/auth/signup
@@ -127,6 +111,51 @@ router.get('/me', protect, async (req, res) => {
   } catch (error) {
     console.error('Me Route Error:', error);
     res.status(500).json({ success: false, message: 'Server error' });
+  }
+});
+
+// @desc    Update user profile
+// @route   PUT /api/auth/me
+// @access  Private
+router.put('/me', protect, async (req, res) => {
+  try {
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      
+      if (req.body.email && req.body.email.toLowerCase() !== user.email.toLowerCase()) {
+        const emailExists = await User.findOne({ email: req.body.email });
+        if (emailExists) {
+          return res.status(400).json({ success: false, message: 'Email address is already in use' });
+        }
+        user.email = req.body.email;
+      }
+
+      if (req.body.password) {
+        if (req.body.password.length < 6) {
+          return res.status(400).json({ success: false, message: 'Password must be at least 6 characters' });
+        }
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        success: true,
+        user: {
+          _id: updatedUser._id,
+          name: updatedUser.name,
+          email: updatedUser.email,
+        },
+      });
+    } else {
+      res.status(404).json({ success: false, message: 'User not found' });
+    }
+  } catch (error) {
+    console.error('Update Profile Error:', error);
+    res.status(500).json({ success: false, message: 'Server error updating profile' });
   }
 });
 

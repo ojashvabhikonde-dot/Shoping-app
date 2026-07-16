@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useCart, parsePrice, formatPrice } from '../context/CartContext';
+import { useAuth } from '../context/AuthContext';
 import './Cart.css';
 
-const Cart = ({ setCurrentPage }) => {
+const Cart = ({ setCurrentPage, setRedirectPage }) => {
+  const { user } = useAuth();
   const {
     cartItems,
     updateQuantity,
@@ -12,10 +14,21 @@ const Cart = ({ setCurrentPage }) => {
   } = useCart();
 
   const [couponCode, setCouponCode] = useState('');
-  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    return localStorage.getItem('appliedCoupon') || null;
+  });
   const [couponError, setCouponError] = useState('');
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [checkoutSuccess, setCheckoutSuccess] = useState(false);
+
+  // Sync coupon to localStorage for Checkout use
+  useEffect(() => {
+    if (appliedCoupon) {
+      localStorage.setItem('appliedCoupon', appliedCoupon);
+    } else {
+      localStorage.removeItem('appliedCoupon');
+    }
+  }, [appliedCoupon]);
 
   // Calculate shipping (Free for orders above ₹10,000, otherwise ₹250)
   const shippingThreshold = 10000;
@@ -74,13 +87,12 @@ const Cart = ({ setCurrentPage }) => {
   };
 
   const handleCheckout = () => {
-    setIsCheckingOut(true);
-    // Simulate checkout API call
-    setTimeout(() => {
-      setIsCheckingOut(false);
-      setCheckoutSuccess(true);
-      clearCart();
-    }, 2000);
+    if (!user) {
+      setRedirectPage('checkout');
+      setCurrentPage('login');
+    } else {
+      setCurrentPage('checkout');
+    }
   };
 
   if (checkoutSuccess) {

@@ -126,8 +126,15 @@
   color: var(--text-secondary);
 }
 
-.user-name {
+.user-name-link {
   color: var(--text-primary);
+  cursor: pointer;
+  transition: color var(--transition-speed) var(--transition-bezier);
+}
+
+.user-name-link:hover {
+  color: var(--primary);
+  text-shadow: 0 0 8px var(--primary-glow);
 }
 
 .logout-btn {
