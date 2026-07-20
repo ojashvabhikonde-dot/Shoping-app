@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const Order = require('../models/Order');
 const { protect } = require('../middleware/auth');
+const { sendOrderConfirmation, sendOrderStatusUpdate } = require('../utils/email');
+
 
 // Helper to parse price string like "₹19,900" or number to float
 const parsePrice = (priceVal) => {
@@ -132,6 +134,9 @@ router.post('/', protect, async (req, res) => {
       status: 'Processing',
     });
 
+    // Send order confirmation email (async)
+    sendOrderConfirmation(req.user, order);
+
     res.status(201).json({ success: true, order });
   } catch (error) {
     console.error('Place Order Error:', error);
@@ -159,6 +164,10 @@ router.patch('/:id/status', protect, async (req, res) => {
     if (paymentStatus) order.paymentStatus = paymentStatus;
 
     await order.save();
+
+    // Send order status update email (async)
+    sendOrderStatusUpdate(req.user, order);
+
     res.json({ success: true, order });
   } catch (error) {
     console.error('Update Order Status Error:', error);

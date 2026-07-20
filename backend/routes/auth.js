@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { protect } = require('../middleware/auth');
 const User = require('../models/User');
+const { sendWelcomeEmail } = require('../utils/email');
+
 
 
 
@@ -37,6 +39,9 @@ router.post('/signup', async (req, res) => {
     });
 
     if (user) {
+      // Send welcome email (async)
+      sendWelcomeEmail(user);
+
       const token = jwt.sign(
         { id: user._id },
         process.env.JWT_SECRET || 'ecommerce_jwt_secret_token_key_12345',
