@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { ThemeProvider } from './context/ThemeContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
@@ -13,6 +14,12 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import Orders from './pages/Orders';
 import Profile from './pages/Profile';
+
+const pageVariants = {
+  initial: { opacity: 0, y: 15, scale: 0.99 },
+  animate: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.35, ease: [0.25, 1, 0.5, 1] } },
+  exit: { opacity: 0, y: -15, scale: 0.99, transition: { duration: 0.2, ease: "easeIn" } }
+};
 
 const MainApp = () => {
   const [currentPage, setCurrentPage] = useState('landing');
@@ -65,8 +72,18 @@ const MainApp = () => {
   return (
     <div className="app-layout">
       <Navbar setCurrentPage={setCurrentPage} currentPage={currentPage} />
-      <main className="app-main">
-        {renderPage()}
+      <main className="app-main" style={{ position: 'relative', overflowX: 'hidden' }}>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentPage}
+            variants={pageVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+          >
+            {renderPage()}
+          </motion.div>
+        </AnimatePresence>
       </main>
     </div>
   );

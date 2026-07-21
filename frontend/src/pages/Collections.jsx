@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { useCart } from '../context/CartContext';
 import './Collections.css';
 
@@ -252,6 +254,15 @@ const Collections = ({ setCurrentPage }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const { addToCart, cartCount } = useCart();
 
+  const handleAddToCart = (item) => {
+    addToCart(item);
+    confetti({
+      particleCount: 50,
+      spread: 60,
+      origin: { y: 0.8 }
+    });
+  };
+
   const filteredProducts = COLLECTIONS_PRODUCTS.filter(prod => {
     const matchesCategory = selectedCategory === 'All' || prod.category === selectedCategory;
     const matchesSearch = prod.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
@@ -261,31 +272,49 @@ const Collections = ({ setCurrentPage }) => {
 
   return (
     <div className="collections-page">
-      <div className="mesh-gradient bg-glow-1"></div>
-      <div className="mesh-gradient bg-glow-2"></div>
+      <div className="mesh-gradient bg-glow-1 animate-float"></div>
+      <div className="mesh-gradient bg-glow-2 animate-float-reverse"></div>
 
-      <header className="collections-header fade-in">
-        <span className="badge-promo">Curated Catalog</span>
+      <motion.header 
+        className="collections-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <span className="badge-promo animate-pulse-glow">Curated Catalog</span>
         <h1 className="collections-title">Our Collections</h1>
         <p className="collections-subtitle">
           Discover a curated ecosystem of premium essentials designed to seamlessly fit your lifestyle.
         </p>
-      </header>
+      </motion.header>
 
       <div className="filter-controls-row">
         <div className="category-tabs">
-          {CATEGORIES.map((cat) => (
-            <button
-              key={cat}
-              className={`tab-btn ${selectedCategory === cat ? 'active' : ''}`}
-              onClick={() => setSelectedCategory(cat)}
-            >
-              {cat}
-            </button>
-          ))}
+          {CATEGORIES.map((cat) => {
+            const isActive = selectedCategory === cat;
+            return (
+              <button
+                key={cat}
+                className={`tab-btn ${isActive ? 'active' : ''}`}
+                onClick={() => setSelectedCategory(cat)}
+              >
+                {cat}
+                {isActive && (
+                  <motion.div 
+                    layoutId="collectionsTabIndicator"
+                    className="tab-active-pill"
+                    transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  />
+                )}
+              </button>
+            );
+          })}
         </div>
 
-        <div className="search-bar">
+        <motion.div 
+          className="search-bar"
+          whileFocus={{ scale: 1.02 }}
+        >
           <svg className="search-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
@@ -298,59 +327,99 @@ const Collections = ({ setCurrentPage }) => {
             className="search-input"
           />
           {searchQuery && (
-            <button className="clear-search-btn" onClick={() => setSearchQuery('')}>×</button>
+            <motion.button 
+              className="clear-search-btn" 
+              onClick={() => setSearchQuery('')}
+              whileHover={{ scale: 1.2, rotate: 90 }}
+              whileTap={{ scale: 0.8 }}
+            >
+              ×
+            </motion.button>
           )}
-        </div>
+        </motion.div>
       </div>
 
-      {filteredProducts.length > 0 ? (
-        <div className="products-grid">
-          {filteredProducts.map((prod) => (
-            <div key={prod.id} className="product-card">
-              <div className="product-visual-wrapper">
-                <span className="product-tag">{prod.tag}</span>
-                <img src={prod.image} alt={prod.name} className="product-image" />
-                <div className="product-overlay">
-                  <p className="product-overlay-desc">{prod.desc}</p>
-                </div>
-              </div>
-              <div className="product-details">
-                <span className="product-cat">{prod.category}</span>
-                <h3 className="product-name">{prod.name}</h3>
-                <div className="product-rating-row">
-                  <div className="product-rating">
-                    <span className="star-icon">⭐</span>
-                    <span className="rating-value">{prod.rating}</span>
+      <motion.div layout className="products-grid">
+        <AnimatePresence mode="popLayout">
+          {filteredProducts.length > 0 ? (
+            filteredProducts.map((prod) => (
+              <motion.div 
+                layout
+                key={prod.id} 
+                className="product-card interactive-card"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                transition={{ duration: 0.35 }}
+                whileHover={{ y: -8 }}
+              >
+                <div className="product-visual-wrapper">
+                  <span className="product-tag">{prod.tag}</span>
+                  <img src={prod.image} alt={prod.name} className="product-image" />
+                  <div className="product-overlay">
+                    <p className="product-overlay-desc">{prod.desc}</p>
                   </div>
-                  <span className="product-price">{prod.price}</span>
                 </div>
-                <button className="btn-add-to-cart" onClick={() => addToCart(prod)}>
-                  Add to Cart
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                    <line x1="12" y1="5" x2="12" y2="19"></line>
-                    <line x1="5" y1="12" x2="19" y2="12"></line>
-                  </svg>
-                </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <div className="no-results">
-          <span className="no-results-icon">🔍</span>
-          <h3>No products found</h3>
-          <p>Try adjusting your search terms or selecting another category.</p>
-        </div>
-      )}
+                <div className="product-details">
+                  <span className="product-cat">{prod.category}</span>
+                  <h3 className="product-name">{prod.name}</h3>
+                  <div className="product-rating-row">
+                    <div className="product-rating">
+                      <span className="star-icon">⭐</span>
+                      <span className="rating-value">{prod.rating}</span>
+                    </div>
+                    <span className="product-price">{prod.price}</span>
+                  </div>
+                  <motion.button 
+                    className="btn-add-to-cart" 
+                    onClick={() => handleAddToCart(prod)}
+                    whileHover={{ scale: 1.04 }}
+                    whileTap={{ scale: 0.95 }}
+                  >
+                    Add to Cart
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                  </motion.button>
+                </div>
+              </motion.div>
+            ))
+          ) : (
+            <motion.div 
+              key="no-results"
+              className="no-results"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+            >
+              <span className="no-results-icon">🔍</span>
+              <h3>No products found</h3>
+              <p>Try adjusting your search terms or selecting another category.</p>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </motion.div>
 
-      {cartCount > 0 && (
-        <div className="floating-cart" onClick={() => setCurrentPage('cart')}>
-          <span className="cart-icon">🛒</span>
-          <span className="cart-badge">{cartCount}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {cartCount > 0 && (
+          <motion.div 
+            className="floating-cart" 
+            onClick={() => setCurrentPage('cart')}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <span className="cart-icon">🛒</span>
+            <span className="cart-badge">{cartCount}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 export default Collections;
+

@@ -444,8 +444,140 @@
   justify-content: center;
 }
 
+/* Reward Wheel Section */
+.wheel-section {
+  margin-bottom: 80px;
+}
+
+.wheel-container {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 40px;
+  padding: 48px;
+  border-radius: 32px;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.wheel-info h2 {
+  font-size: 32px;
+  font-weight: 800;
+  margin: 12px 0;
+}
+
+.wheel-info p {
+  color: var(--text-secondary);
+  margin-bottom: 24px;
+  font-size: 15px;
+}
+
+.btn-spin-wheel {
+  padding: 16px 36px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: 800;
+  color: white;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  box-shadow: 0 8px 25px var(--primary-glow);
+  cursor: pointer;
+
+}
+
+.prize-won-box {
+  background: rgba(52, 211, 153, 0.15);
+  border: 1px solid rgba(52, 211, 153, 0.4);
+  color: #059669;
+  padding: 16px 24px;
+  border-radius: 20px;
+  font-size: 15px;
+  line-height: 1.5;
+}
+
+.wheel-visual-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 240px;
+}
+
+.wheel-pointer {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  font-size: 24px;
+  color: var(--accent);
+}
+
+.wheel-disc {
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  border: 8px solid var(--surface);
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  background: conic-gradient(
+    #4f46e5 0deg 90deg,
+    #e11d48 90deg 180deg,
+    #38bdf8 180deg 270deg,
+    #34d399 270deg 360deg
+  );
+}
+
+.wheel-segment {
+  position: absolute;
+  font-size: 11px;
+  font-weight: 800;
+  color: white;
+  text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+.seg-1 { top: 30px; left: 35px; transform: rotate(-45deg); }
+.seg-2 { top: 30px; right: 35px; transform: rotate(45deg); }
+.seg-3 { bottom: 30px; right: 35px; transform: rotate(135deg); }
+.seg-4 { bottom: 30px; left: 35px; transform: rotate(-135deg); }
+
+/* Claimed Bar in Flash Sale */
+.claimed-bar-wrapper {
+  position: relative;
+  height: 20px;
+  background: var(--bg-secondary);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 16px;
+  border: 1px solid var(--border);
+}
+
+.claimed-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent), #f43f5e);
+  border-radius: 10px;
+  transition: width 1s ease;
+}
+
+.claimed-bar-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
 /* Countdown responsive */
 @media (max-width: 768px) {
+  .wheel-container {
+    grid-template-columns: 1fr;
+    padding: 32px 24px;
+    text-align: center;
+  }
   .countdown-card {
     padding: 40px 24px;
   }
@@ -463,3 +595,4 @@
     font-size: 24px;
   }
 }
+

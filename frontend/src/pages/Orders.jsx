@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { useAuth } from '../context/AuthContext';
 import { formatPrice, parsePrice } from '../context/CartContext';
 import './Orders.css';
@@ -11,65 +13,11 @@ const Orders = ({ setCurrentPage }) => {
   const [expandedOrderId, setExpandedOrderId] = useState(null);
 
   const triggerConfetti = () => {
-    const canvas = document.getElementById('confetti-canvas');
-    if (!canvas) return;
-    const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
-    let particles = [];
-    const colors = ['#6366f1', '#f43f5e', '#10b981', '#f59e0b', '#3b82f6', '#ec4899'];
-
-    for (let i = 0; i < 150; i++) {
-      particles.push({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        r: Math.random() * 6 + 4,
-        d: Math.random() * canvas.height,
-        color: colors[Math.floor(Math.random() * colors.length)],
-        tilt: Math.random() * 10 - 5,
-        tiltAngleIncremental: Math.random() * 0.07 + 0.02,
-        tiltAngle: 0
-      });
-    }
-
-    let animationFrameId;
-
-    const draw = () => {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      let active = false;
-
-      particles.forEach((p, idx) => {
-        p.tiltAngle += p.tiltAngleIncremental;
-        p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
-        p.x += Math.sin(p.tiltAngle);
-        p.tilt = Math.sin(p.tiltAngle - idx / 3) * 15;
-
-        if (p.y < canvas.height) {
-          active = true;
-        }
-
-        ctx.beginPath();
-        ctx.lineWidth = p.r;
-        ctx.strokeStyle = p.color;
-        ctx.moveTo(p.x + p.tilt + p.r / 2, p.y);
-        ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r / 2);
-        ctx.stroke();
-      });
-
-      if (active) {
-        animationFrameId = requestAnimationFrame(draw);
-      } else {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-      }
-    };
-
-    draw();
-
-    setTimeout(() => {
-      cancelAnimationFrame(animationFrameId);
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-    }, 4000);
+    confetti({
+      particleCount: 150,
+      spread: 100,
+      origin: { y: 0.6 }
+    });
   };
 
   const handleUpdateStatus = async (orderId, newStatus) => {
@@ -148,6 +96,7 @@ const Orders = ({ setCurrentPage }) => {
     }
   };
 
+
   return (
     <div className="orders-page">
       <canvas id="confetti-canvas" style={{position: 'fixed', top:0, left:0, width:'100vw', height:'100vh', pointerEvents:'none', zIndex: 9999}} />
@@ -200,9 +149,12 @@ const Orders = ({ setCurrentPage }) => {
             });
 
             return (
-              <div 
+              <motion.div 
                 key={order._id} 
                 className={`order-card glass-panel ${isExpanded ? 'expanded' : ''}`}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                whileHover={{ scale: 1.01 }}
               >
                 {/* Order card header summary */}
                 <div className="order-summary-row" onClick={() => toggleExpandOrder(order._id)}>
@@ -244,8 +196,16 @@ const Orders = ({ setCurrentPage }) => {
                 </div>
 
                 {/* Expanded Details Section */}
-                {isExpanded && (
-                  <div className="order-expanded-details fade-in">
+                <AnimatePresence>
+                  {isExpanded && (
+                    <motion.div 
+                      className="order-expanded-details"
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                    >
+
                     <hr className="details-divider" />
                     
                     <div className="details-grid">
@@ -362,15 +322,16 @@ const Orders = ({ setCurrentPage }) => {
                         ))}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
-              </div>
-            );
-          })}
-        </div>
-      )}
-    </div>
-  );
+              </AnimatePresence>
+            </motion.div>
+          );
+        })}
+      </div>
+    )}
+  </div>
+);
 };
 
 export default Orders;

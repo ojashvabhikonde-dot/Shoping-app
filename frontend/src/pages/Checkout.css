@@ -326,17 +326,92 @@
   align-items: center;
 }
 
-.live-card-graphic {
+.card-3d-perspective {
+  perspective: 1000px;
   width: 320px;
   height: 190px;
+}
+
+.live-card-graphic {
+  width: 100%;
+  height: 100%;
   border-radius: 20px;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 15px 35px rgba(0,0,0,0.15);
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
+  transform-style: preserve-3d;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+}
+
+.live-card-inner {
+  position: absolute;
+  inset: 0;
+  border-radius: 20px;
+  padding: 24px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: linear-gradient(135deg, rgba(20, 30, 48, 0.95), rgba(36, 59, 85, 0.95));
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.card-front {
+  z-index: 2;
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: 20px;
+}
+
+.magnetic-stripe {
+  width: 100%;
+  height: 40px;
+  background: #0f172a;
+  margin-top: 24px;
+}
+
+.cvv-bar-container {
+  padding: 0 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.cvv-bar-container span {
+  font-size: 10px;
+  font-weight: 700;
+  color: #94a3b8;
+}
+
+.cvv-bar-display {
+  width: 100%;
+  height: 36px;
+  background: white;
+  color: #0f172a;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 12px;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 16px;
+  border-radius: 4px;
+  letter-spacing: 2px;
+}
+
+.card-back-text {
+  font-size: 9px;
+  color: #64748b;
+  text-align: center;
+  padding: 0 24px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
 }
 
 .live-card-glow-1 {

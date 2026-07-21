@@ -1,4 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import confetti from 'canvas-confetti';
 import { useCart } from '../context/CartContext';
 import './NewArrivals.css';
 
@@ -95,28 +97,78 @@ const NEW_ARRIVALS = [
 
 const NewArrivals = ({ setCurrentPage }) => {
   const { addToCart, cartCount } = useCart();
+  const [timeLeft, setTimeLeft] = useState({ hours: 5, minutes: 42, seconds: 18 });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setTimeLeft(prev => {
+        if (prev.seconds > 0) return { ...prev, seconds: prev.seconds - 1 };
+        if (prev.minutes > 0) return { ...prev, minutes: 59, seconds: 59 };
+        if (prev.hours > 0) return { hours: prev.hours - 1, minutes: 59, seconds: 59 };
+        return { hours: 12, minutes: 0, seconds: 0 };
+      });
+    }, 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const handleAddWithConfetti = (item) => {
+    addToCart(item);
+    confetti({
+      particleCount: 65,
+      spread: 70,
+      origin: { y: 0.75 }
+    });
+  };
 
   return (
     <div className="new-arrivals-page">
-      <div className="mesh-gradient bg-glow-1"></div>
-      <div className="mesh-gradient bg-glow-2"></div>
+      <div className="mesh-gradient bg-glow-1 animate-float"></div>
+      <div className="mesh-gradient bg-glow-2 animate-float-reverse"></div>
 
-      <header className="arrivals-header fade-in">
-        <span className="badge-promo">Fresh Drops</span>
+      <motion.header 
+        className="arrivals-header"
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+      >
+        <span className="badge-promo animate-pulse-glow">Fresh Drops</span>
         <h1 className="arrivals-title">New Arrivals</h1>
         <p className="arrivals-subtitle">
           Be the first to explore our latest collection of premium aesthetics and technological milestones.
         </p>
-      </header>
 
-      <div className="spotlight-card fade-in">
-        <div className="spotlight-badge">SPOTLIGHT OF THE MONTH</div>
+        {/* Live Ticking Countdown Box */}
+        <motion.div 
+          className="countdown-timer-box"
+          whileHover={{ scale: 1.03 }}
+        >
+          <span className="timer-label">⏰ NEXT DROP IN:</span>
+          <div className="timer-units">
+            <span className="time-block">{String(timeLeft.hours).padStart(2, '0')}h</span>
+            <span className="time-colon">:</span>
+            <span className="time-block">{String(timeLeft.minutes).padStart(2, '0')}m</span>
+            <span className="time-colon">:</span>
+            <span className="time-block time-highlight">{String(timeLeft.seconds).padStart(2, '0')}s</span>
+          </div>
+        </motion.div>
+      </motion.header>
+
+      {/* Spotlight Card */}
+      <motion.div 
+        className="spotlight-card interactive-card"
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.7 }}
+      >
+        <div className="spotlight-badge animate-pulse-glow">SPOTLIGHT OF THE MONTH</div>
         <div className="spotlight-layout">
           <div className="spotlight-image-wrapper">
-            <img 
+            <motion.img 
               src="https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=800&auto=format&fit=crop&q=80" 
               alt="Aura Curved Monitor" 
               className="spotlight-image"
+              whileHover={{ scale: 1.06 }}
+              transition={{ duration: 0.5 }}
             />
           </div>
           <div className="spotlight-details">
@@ -141,23 +193,41 @@ const NewArrivals = ({ setCurrentPage }) => {
             </div>
             <div className="spotlight-price-row">
               <span className="spotlight-price">₹49,900</span>
-              <button className="btn-primary-glow" onClick={() => addToCart(NEW_ARRIVALS.find(item => item.id === 501) || NEW_ARRIVALS[0])}>
-                Pre-Order Now
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-                  <line x1="5" y1="12" x2="19" y2="12"></line>
-                  <polyline points="12 5 19 12 12 19"></polyline>
-                </svg>
-              </button>
+              <motion.button 
+                className="btn-primary-glow" 
+                onClick={() => handleAddWithConfetti(NEW_ARRIVALS.find(item => item.id === 501) || NEW_ARRIVALS[0])}
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+              >
+                Pre-Order Now ⚡
+              </motion.button>
             </div>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       <section className="arrivals-grid-section">
         <h2 className="section-title">Just Landed</h2>
-        <div className="arrivals-grid">
+        <motion.div 
+          className="arrivals-grid"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{
+            hidden: {},
+            visible: { transition: { staggerChildren: 0.1 } }
+          }}
+        >
           {NEW_ARRIVALS.map((prod) => (
-            <div key={prod.id} className="arrival-card">
+            <motion.div 
+              key={prod.id} 
+              className="arrival-card interactive-card"
+              variants={{
+                hidden: { opacity: 0, y: 25 },
+                visible: { opacity: 1, y: 0, transition: { duration: 0.4 } }
+              }}
+              whileHover={{ y: -8 }}
+            >
               <div className="arrival-image-wrapper">
                 <span className="arrival-tag" style={{ backgroundColor: prod.badgeColor }}>
                   {prod.tag}
@@ -170,27 +240,44 @@ const NewArrivals = ({ setCurrentPage }) => {
                 <p className="arrival-desc">{prod.desc}</p>
                 <div className="arrival-price-row">
                   <span className="arrival-price">{prod.price}</span>
-                  <button className="btn-icon-add" onClick={() => addToCart(prod)} aria-label="Add to Cart">
+                  <motion.button 
+                    className="btn-icon-add" 
+                    onClick={() => handleAddWithConfetti(prod)} 
+                    aria-label="Add to Cart"
+                    whileHover={{ scale: 1.15, rotate: 90 }}
+                    whileTap={{ scale: 0.9 }}
+                  >
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                       <line x1="12" y1="5" x2="12" y2="19"></line>
                       <line x1="5" y1="12" x2="19" y2="12"></line>
                     </svg>
-                  </button>
+                  </motion.button>
                 </div>
               </div>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </section>
 
-      {cartCount > 0 && (
-        <div className="floating-cart" onClick={() => setCurrentPage('cart')}>
-          <span className="cart-icon">🛒</span>
-          <span className="cart-badge">{cartCount}</span>
-        </div>
-      )}
+      <AnimatePresence>
+        {cartCount > 0 && (
+          <motion.div 
+            className="floating-cart" 
+            onClick={() => setCurrentPage('cart')}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0 }}
+            whileHover={{ scale: 1.15 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <span className="cart-icon">🛒</span>
+            <span className="cart-badge">{cartCount}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
 
 export default NewArrivals;
+
